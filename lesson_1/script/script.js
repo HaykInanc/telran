@@ -1,7 +1,26 @@
 const user_add_form_elem = document.querySelector('#user_add_form');
+const search_form = document.querySelector('#search_form');
 const clearBtn = user_add_form_elem.querySelector('.clear');
 const user_container = document.querySelector('.user-container');
-let users = [];
+const sortContainer = document.querySelector('.sort');
+let users = [
+    {
+        name: "Гайк",
+        lastname: "Инанц"
+    },
+    {
+        name: "Максим",
+        lastname: "Грибов"
+    },
+    {
+        name: "Антон",
+        lastname: "Куликов"
+    },
+    {
+        name: "Роман",
+        lastname: "Иванов"
+    }
+];
 
 function get_card(name, lastname, avatar){
     const user_element = document.createElement('div');
@@ -22,15 +41,18 @@ function get_card(name, lastname, avatar){
 }
 
 
-function render(){
+
+
+
+function render(users_list = users){
     user_container.innerText = '';
-    if (users.length === 0){
+    if (users_list.length === 0){
         const info = document.createElement('p');
         info.classList.add('info');
         info.innerText = 'Карточки пользователей отсутствуют 🥲';
         user_container.append(info);
     }else{
-        user_container.append(...users.map(({name, lastname, avatar}) => get_card(name, lastname, avatar)))
+        user_container.append(...users_list.map(({name, lastname, avatar}) => get_card(name, lastname, avatar)))
     }
 }
 
@@ -54,5 +76,33 @@ clearBtn.addEventListener('click', event =>{
     lastname.value = '';
     avatar.value = '';
 })
+
+search_form.query.addEventListener('input', event=>{
+    // поиск юзеров, которые подходят по условию
+    const result = users.filter(({name, lastname}) =>  
+        `${name} ${lastname}`.toLocaleLowerCase().includes(event.target.value)
+    );
+    render(result);
+})
+
+sortContainer.querySelector('.descr').addEventListener('click', ()=>{
+    users.sort((user_1, user_2) => {
+        const compare_string_1 = `${user_1.name} ${user_1.lastname}`;
+        const compare_string_2 = `${user_2.name} ${user_2.lastname}`;
+        return compare_string_1.localeCompare(compare_string_2);
+    })
+    render();
+});
+
+
+sortContainer.querySelector('.incr').addEventListener('click', ()=>{
+    users.sort((user_1, user_2) => {
+        const compare_string_1 = `${user_1.name} ${user_1.lastname}`;
+        const compare_string_2 = `${user_2.name} ${user_2.lastname}`;
+        return -1 * compare_string_1.localeCompare(compare_string_2);
+    })
+    render();
+});
+
 
 render();
